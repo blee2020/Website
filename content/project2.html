@@ -1,0 +1,512 @@
+---
+title: "PROJECT 2"
+author: "SDS348 Spring 2020"
+date: "2020-05-09"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+
+<p>Becky Lee bsl668</p>
+<hr />
+<div id="introduction" class="section level3">
+<h3>0: Introduction</h3>
+<div id="the-infert-dataset-in-r-was-used-for-this-project.-some-information-regarding-the-dataset-was-found-online-due-to-some-difficulty-interpreting-the-variables-and-background-of-the-study.-the-dataset-is-officially-titled-infertility-after-spontaneous-and-induced-abortion-and-is-based-on-a-study-published-in-1976.-the-study-aimed-to-see-if-there-was-a-connection-between-infertility-and-abortions-both-induced-and-spontaneous." class="section level5">
+<h5>The ‘infert’ dataset in R was used for this project. Some information regarding the dataset was found online, due to some difficulty interpreting the variables and background of the study. The dataset is officially titled “Infertility after Spontaneous and Induced Abortion” and is based on a study published in 1976. The study aimed to see if there was a connection between infertility and abortions, both induced and spontaneous.</h5>
+</div>
+<div id="there-were-eight-variables-in-the-dataset.-case-indicated-whether-the-patient-was-categorized-as-case-or-control.-education-indicated-level-of-education.-the-original-dataset-had-3-levels-with-the-following-years-0-5-6-11-or-12.-these-were-changed-respectively-to-low-medium-and-high.-the-numeric-variables-were-age-induced-the-number-of-induced-abortions-spontaneous-the-number-of-spontaneous-abortions-and-parity-total-number-of-times-patient-gave-birth.-for-the-induced-and-spontaneous-variables-2-represents-2-or-more." class="section level5">
+<h5>There were eight variables in the dataset. ‘case’ indicated whether the patient was categorized as case or control. ‘education’ indicated level of education. The original dataset had 3 levels with the following years: 0-5, 6-11, or 12+. These were changed, respectively, to ‘low’, ‘medium’, and ‘high’. The numeric variables were ‘age’, ‘induced’ (the number of induced abortions), ‘spontaneous’ (the number of spontaneous abortions), and ‘parity’ (total number of times patient gave birth). For the ‘induced’ and ‘spontaneous’ variables, 2 represents 2 or more.</h5>
+<pre class="r"><code>?infert
+data(infert)
+head(infert)</code></pre>
+<pre><code>##   education age parity induced case spontaneous stratum pooled.stratum
+## 1    0-5yrs  26      6       1    1           2       1              3
+## 2    0-5yrs  42      1       1    1           0       2              1
+## 3    0-5yrs  39      6       2    1           0       3              4
+## 4    0-5yrs  34      4       2    1           0       4              2
+## 5   6-11yrs  35      3       1    1           1       5             32
+## 6   6-11yrs  36      4       2    1           1       6             36</code></pre>
+<pre class="r"><code>infdata&lt;-infert
+colnames(infdata)</code></pre>
+<pre><code>## [1] &quot;education&quot;      &quot;age&quot;            &quot;parity&quot;         &quot;induced&quot;       
+## [5] &quot;case&quot;           &quot;spontaneous&quot;    &quot;stratum&quot;        &quot;pooled.stratum&quot;</code></pre>
+<pre class="r"><code>nrow(infdata)</code></pre>
+<pre><code>## [1] 248</code></pre>
+<pre class="r"><code>library(dplyr)
+infdata&lt;-infdata%&gt;%mutate(case=as.character(case),case=if_else(case==&#39;1&#39;,&#39;case&#39;,case),case=if_else(case==&#39;0&#39;,&#39;control&#39;,case),case = as.factor(case))
+infdata&lt;-infdata%&gt;%mutate(education=as.character(education),education=if_else(education==&#39;0-5yrs&#39;,&#39;low&#39;,education),education=if_else(education==&#39;6-11yrs&#39;,&#39;medium&#39;,education),education=if_else(education==&#39;12+ yrs&#39;,&#39;high&#39;,education),education=as.factor(education))
+infdata$stratum&lt;-factor(infdata$stratum)
+infdata$pooled.stratum&lt;-factor(infdata$pooled.stratum)
+infdata&lt;-infdata[(infdata$stratum!=74),]
+nrow(infdata)</code></pre>
+<pre><code>## [1] 246</code></pre>
+<p>There were 83 case patients and 2 control patients per case patients, which give a total of 249 patients. Each control patient was similar to their respective case patient when it came to the other categories (eg. education, age, etc). However, the dataset shows there were 248 observations, where 83 were case patients and 165 were control patients. It was found that case 74 did not have 2 control cases, so it was removed. The resulting number of observations was 246, with 82 being cases and 164 being controls.</p>
+</div>
+</div>
+<div id="section" class="section level3">
+<h3>1:</h3>
+<pre class="r"><code>data1&lt;-infdata
+data1$stratum&lt;-data1$pooled.stratum&lt;-data1$age&lt;-NULL
+colnames(data1) #categorical: education, case #numeric: parity, induced, spontaneous</code></pre>
+<pre><code>## [1] &quot;education&quot;   &quot;parity&quot;      &quot;induced&quot;     &quot;case&quot;        &quot;spontaneous&quot;</code></pre>
+<pre class="r"><code>summary(data1$case)</code></pre>
+<pre><code>##    case control 
+##      82     164</code></pre>
+<pre class="r"><code>man1&lt;-manova(cbind(parity,induced,spontaneous)~education,data=data1)
+summary(man1)</code></pre>
+<pre><code>##            Df Pillai approx F num Df den Df    Pr(&gt;F)    
+## education   2 0.2961   14.018      6    484 9.847e-15 ***
+## Residuals 243                                            
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>##  Response parity :
+##              Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## education     2  66.088  33.044  27.689 1.469e-11 ***
+## Residuals   243 289.997   1.193                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response induced :
+##              Df Sum Sq Mean Sq F value   Pr(&gt;F)   
+## education     2   5.66 2.83008  5.3571 0.005288 **
+## Residuals   243 128.37 0.52828                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response spontaneous :
+##              Df  Sum Sq Mean Sq F value Pr(&gt;F)
+## education     2   0.514 0.25709  0.4883 0.6143
+## Residuals   243 127.945 0.52652</code></pre>
+<pre class="r"><code>pairwise.t.test(data1$parity,data1$education,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  data1$parity and data1$education 
+## 
+##        high    low    
+## low    1.9e-12 -      
+## medium 0.031   4.5e-10
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(data1$induced,data1$education,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  data1$induced and data1$education 
+## 
+##        high   low   
+## low    0.0144 -     
+## medium 0.1213 0.0019
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>1-0.95^10</code></pre>
+<pre><code>## [1] 0.4012631</code></pre>
+<pre class="r"><code>0.5/10</code></pre>
+<pre><code>## [1] 0.05</code></pre>
+<pre class="r"><code>pairwise.t.test(data1$parity,data1$education,p.adj=&quot;bonf&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  data1$parity and data1$education 
+## 
+##        high    low    
+## low    5.8e-12 -      
+## medium 0.092   1.4e-09
+## 
+## P value adjustment method: bonferroni</code></pre>
+<pre class="r"><code>pairwise.t.test(data1$induced,data1$education,p.adj=&quot;bonf&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  data1$induced and data1$education 
+## 
+##        high   low   
+## low    0.0431 -     
+## medium 0.3638 0.0056
+## 
+## P value adjustment method: bonferroni</code></pre>
+<p>MANOVA hypotheses - H0: For all three dependent variables (parity, induced, spontaneous), means for each education group are equal. HA: For at least one dependent variable, at least one education group mean is different. A one-way MANOVA was performed to see the effect of education level on the following three dependent variables: parity, induced, spontaneous. Based on the results from the MANOVA test, the null hypothesis was rejected, since significant differences were found among education levels for at least one dependent variable, Pillai trace=0.2961, pseudo F(6,484)=14.018, p&lt;0.0001.
+To determine which of the dependent variables showed a mean difference among education groups, a univariate ANOVA and post-hoc t tests was performed. The ‘parity’ and ‘induced’ variables only showed significant mean differences. Post hoc analysis showed that low education levels differed significantly from the other levels (medium and high).
+1 MANOVA, 3 ANOVAs, and 6 t tests were done. The probability of at least one Type I error (unadjusted) is as follows: 1 - 0.95^10 = 0.4012631, or 40%. After adjusting the significance level, alpha’ = 0.5/10 = 0.05, or 5%. Even after Bonferroni correction, the differences were significant.
+MANOVA has many assumptions, and from a glance, not all of them would have been met. The ‘infert’ data did have random samples and independent observations. However, it is unclear whether the data met the other assumptions. It is likely that some variables, such as parity and spontaneous, induced abortions were correlated. In addition, it would be difficult to determine multivariate normality or homogeneity since ‘induced’ and ‘spontaneous’ each have only 3 dicrete values.</p>
+</div>
+<div id="section-1" class="section level3">
+<h3>2:</h3>
+<pre class="r"><code>summary(aov(parity~education,data=data1))</code></pre>
+<pre><code>##              Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## education     2  66.09   33.04   27.69 1.47e-11 ***
+## Residuals   243 290.00    1.19                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>obs_F&lt;-27.69
+Fs&lt;-replicate(5000,{
+  new&lt;-data1%&gt;%mutate(parity=sample(parity))
+  SSW&lt;-new%&gt;%group_by(education)%&gt;%summarize(SSW=sum((parity-mean(parity))^2))%&gt;%summarize(sum(SSW))%&gt;%pull
+  SSB&lt;-new%&gt;%mutate(mean=mean(parity))%&gt;%group_by(education)%&gt;%mutate(groupmean=mean(parity))%&gt;%
+    summarize(SSB=sum((mean-groupmean)^2))%&gt;%summarize(sum(SSB))%&gt;%pull
+  (SSB/2)/(SSW/243)
+})
+hist(Fs, prob=T,xlim=c(0,30));abline(v=obs_F, col=&quot;red&quot;,add=T)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mean(Fs&gt;obs_F)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<p>A randomization test was performed, where the data was scrambled, and the actual F statistic from 1. was compared to the null distribution. If the actual F statistic is not a realistic value in the null distribution, the null hypothesis could be rejected, meaning that the group means were not all equal. Since the most significant variable was parity, this randomization test focused on parity as the response variable and education.
+H0: For the dependent variable parity, means among education groups are equal. HA: For parity, means among education groups are not equal. The test results showed that none of the 5000 F statistics generated were larger than the actual F=27.69. As a result, this supports rejection of the null hypothesis and that the education groups are different.</p>
+</div>
+<div id="section-2" class="section level3">
+<h3>3:</h3>
+<pre class="r"><code>data3&lt;-infdata%&gt;%mutate(abortions=induced+spontaneous)
+data3$stratum&lt;-data3$pooled.stratum&lt;-NULL
+head(data3)</code></pre>
+<pre><code>##   education age parity induced case spontaneous abortions
+## 1       low  26      6       1 case           2         3
+## 2       low  42      1       1 case           0         1
+## 3       low  39      6       2 case           0         2
+## 4       low  34      4       2 case           0         2
+## 5    medium  35      3       1 case           1         2
+## 6    medium  36      4       2 case           1         3</code></pre>
+<pre class="r"><code>data3$age_c&lt;-data3$age-mean(data3$age)
+fit3&lt;-lm(abortions~case+age_c+case:age_c,data=data3)
+summary(fit3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = abortions ~ case + age_c + case:age_c, data = data3)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.5585 -0.5642 -0.0936  0.4736  2.2506 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        1.536585   0.091622  16.771  &lt; 2e-16 ***
+## casecontrol       -0.591463   0.112214  -5.271 3.01e-07 ***
+## age_c              0.002295   0.017521   0.131   0.8959    
+## casecontrol:age_c -0.045318   0.021459  -2.112   0.0357 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.8297 on 242 degrees of freedom
+## Multiple R-squared:  0.1414, Adjusted R-squared:  0.1308 
+## F-statistic: 13.29 on 3 and 242 DF,  p-value: 4.666e-08</code></pre>
+<pre class="r"><code>data3$case&lt;-relevel(data3$case,ref=&quot;control&quot;)
+fit3&lt;-lm(abortions~case+age_c+case:age_c,data=data3)
+summary(fit3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = abortions ~ case + age_c + case:age_c, data = data3)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.5585 -0.5642 -0.0936  0.4736  2.2506 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     0.94512    0.06479  14.588  &lt; 2e-16 ***
+## casecase        0.59146    0.11221   5.271 3.01e-07 ***
+## age_c          -0.04302    0.01239  -3.473 0.000611 ***
+## casecase:age_c  0.04532    0.02146   2.112 0.035726 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.8297 on 242 degrees of freedom
+## Multiple R-squared:  0.1414, Adjusted R-squared:  0.1308 
+## F-statistic: 13.29 on 3 and 242 DF,  p-value: 4.666e-08</code></pre>
+<pre class="r"><code>library(ggplot2)
+ggplot(data3, aes(x=age_c,y=abortions,group=case))+geom_point(aes(color=case))+
+  geom_smooth(method=&quot;lm&quot;,formula=y~1,se=F,fullrange=T,aes(color=case))+xlab(&quot;age (centered)&quot;)+
+  ggtitle(&quot;t-test controlling for age&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(viridis)
+ggplot(data3,aes(x=age_c,y=..density..,fill=case))+geom_histogram(binwidth=3,alpha=0.5,position=&quot;identity&quot;)+facet_wrap(~abortions)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>resids&lt;-fit3$residuals
+shapiro.test(resids)</code></pre>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  resids
+## W = 0.97024, p-value = 5.088e-05</code></pre>
+<pre class="r"><code>fitted&lt;-fit3$fitted.values
+ggplot()+geom_point(aes(fitted,resids))+geom_hline(yintercept=0,color=&#39;red&#39;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(sandwich); library(lmtest)
+bptest(fit3)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  fit3
+## BP = 0.50371, df = 3, p-value = 0.9181</code></pre>
+<pre class="r"><code>summary(fit3)$coef[,1:2]</code></pre>
+<pre><code>##                   Estimate Std. Error
+## (Intercept)     0.94512195 0.06478684
+## casecase        0.59146341 0.11221410
+## age_c          -0.04302248 0.01238929
+## casecase:age_c  0.04531759 0.02145888</code></pre>
+<pre class="r"><code>coeftest(fit3,vcov=vcovHC(fit3))[,1:2]</code></pre>
+<pre><code>##                   Estimate Std. Error
+## (Intercept)     0.94512195 0.06534760
+## casecase        0.59146341 0.11297579
+## age_c          -0.04302248 0.01188891
+## casecase:age_c  0.04531759 0.02119528</code></pre>
+<pre class="r"><code>summary(fit3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = abortions ~ case + age_c + case:age_c, data = data3)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.5585 -0.5642 -0.0936  0.4736  2.2506 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     0.94512    0.06479  14.588  &lt; 2e-16 ***
+## casecase        0.59146    0.11221   5.271 3.01e-07 ***
+## age_c          -0.04302    0.01239  -3.473 0.000611 ***
+## casecase:age_c  0.04532    0.02146   2.112 0.035726 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.8297 on 242 degrees of freedom
+## Multiple R-squared:  0.1414, Adjusted R-squared:  0.1308 
+## F-statistic: 13.29 on 3 and 242 DF,  p-value: 4.666e-08</code></pre>
+<p>For this test, a new variable ‘abortions’ was made, which gave the total number of abortions for a patient, both spontaneous and induced. H0: The variables case and age do not explain variation in abortions. HA: The variables case and age do explain variation in abortions. abortions = b0 + b1(case) + b2(age) + b3(case*age). Numeric variable age was centered. Categorical variable case was not. However, the reference group was changed to ‘control’ cases.
+The intercept is 0.94512, which represents the predicted number of abortions for an average age control observation. Controlling for age, abortions in the case group is 0.59146 units higher than in the control group on average. Controlling for case category, average aged women show a decrease of 0.04302 abortions for every 1 year increase in age on average. The slope for case category on age is 0.04532 higher for cases relative to controls.
+The Shapiro-Wilk normality test was performed, and it showed that the true distribution is not normal. The linearity and homoskedsaticity assumptions were checked visually with a scatterplot of reiduals and fitted values from the model. Based on eyeballing the plot and the clear pattern of the dots, it appeared that these assumptions were violated. However, the Breusch-Pagan test officially tested homoskedasticity and rejected the null hypothesis that the model was homoskedastic.
+After correcting the standard error, there was little change in the results. The standard errors in the “after” table only differ at the third decimal, which are slightly larger than the “before”. The R^2 value shows the proportion of variation in the response variable explained by the model. R^2 = 0.1414. Adjusted R^2 which includes the penalty due to chance associations = 0.1308. In other words approximately 13-14% of variability in abortions in explained.</p>
+</div>
+<div id="section-3" class="section level3">
+<h3>4:</h3>
+<pre class="r"><code>fit3&lt;-lm(abortions~case+age_c+case:age_c,data=data3)
+samp_distn&lt;-replicate(5000, {
+  boot_dat&lt;-sample_frac(data3,replace=T)
+  fit3&lt;-lm(abortions~case+age_c+case:age_c,data=boot_dat)
+  coef(fit3)
+})
+resids&lt;-fit3$residuals
+fitted&lt;-fit3$fitted.values
+resid_resamp&lt;-replicate(5000,{
+  new_resids&lt;-sample(resids,replace=TRUE)
+  data3$new_y&lt;-fitted+new_resids
+  fit3&lt;-lm(new_y~case+age_c+case:age_c,data=data3)
+  coef(fit3)
+})
+summary(fit3)$coef[,1:2]</code></pre>
+<pre><code>##                   Estimate Std. Error
+## (Intercept)     0.94512195 0.06478684
+## casecase        0.59146341 0.11221410
+## age_c          -0.04302248 0.01238929
+## casecase:age_c  0.04531759 0.02145888</code></pre>
+<pre class="r"><code>coeftest(fit3,vcov=vcovHC(fit3))[,1:2]</code></pre>
+<pre><code>##                   Estimate Std. Error
+## (Intercept)     0.94512195 0.06534760
+## casecase        0.59146341 0.11297579
+## age_c          -0.04302248 0.01188891
+## casecase:age_c  0.04531759 0.02119528</code></pre>
+<pre class="r"><code>samp_distn%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) casecase      age_c casecase:age_c
+## 1  0.06606827 0.112837 0.01168105     0.02094298</code></pre>
+<pre class="r"><code>resid_resamp%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) casecase      age_c casecase:age_c
+## 1  0.06410685  0.10992 0.01237142     0.02111923</code></pre>
+<p>Bootstrapping the regression estimates was useful, due to some assumptions that were violated. The standard errors for itnercept, casecase, age_c, and casecase:age_c are shown above. There are slight differences among the normal-theory SEs, robust SEs, and boostrapped SEs (both resampling rows and resampling residuals). The normal-theory and robust SEs were slightly larger than the bootstrapped SEs, which is expected since bootstrapped SEs are the variation of random sample means.</p>
+<p>###5:</p>
+<pre class="r"><code>data5&lt;-data3%&gt;%mutate(y=ifelse(case==&quot;case&quot;,1,0))
+head(data5)</code></pre>
+<pre><code>##   education age parity induced case spontaneous abortions    age_c y
+## 1       low  26      6       1 case           2         3 -5.45122 1
+## 2       low  42      1       1 case           0         1 10.54878 1
+## 3       low  39      6       2 case           0         2  7.54878 1
+## 4       low  34      4       2 case           0         2  2.54878 1
+## 5    medium  35      3       1 case           1         2  3.54878 1
+## 6    medium  36      4       2 case           1         3  4.54878 1</code></pre>
+<pre class="r"><code>fit5&lt;-glm(y~education+abortions+parity,data=data5,family=&quot;binomial&quot;)
+coeftest(fit5)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                 Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept)     -1.25134    0.34306 -3.6476 0.0002647 ***
+## educationlow     1.78373    0.82897  2.1518 0.0314166 *  
+## educationmedium  0.56415    0.32189  1.7526 0.0796662 .  
+## abortions        1.75200    0.28510  6.1452 7.986e-10 ***
+## parity          -0.97370    0.21076 -4.6200 3.838e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>exp(coef(fit5))%&gt;%round(5)</code></pre>
+<pre><code>##     (Intercept)    educationlow educationmedium       abortions          parity 
+##         0.28612         5.95203         1.75796         5.76612         0.37768</code></pre>
+<pre class="r"><code>probs&lt;-predict(fit5,type=&quot;response&quot;)
+table(predict=as.numeric(probs&gt;.5),truth=data5$y)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict   0   1 Sum
+##     0   139  42 181
+##     1    25  40  65
+##     Sum 164  82 246</code></pre>
+<pre class="r"><code>(139+40)/246</code></pre>
+<pre><code>## [1] 0.7276423</code></pre>
+<pre class="r"><code>40/82</code></pre>
+<pre><code>## [1] 0.4878049</code></pre>
+<pre class="r"><code>139/164</code></pre>
+<pre><code>## [1] 0.847561</code></pre>
+<pre class="r"><code>40/65</code></pre>
+<pre><code>## [1] 0.6153846</code></pre>
+<pre class="r"><code>data5$logit&lt;-predict(fit5,type=&quot;link&quot;)
+data5%&gt;%ggplot()+geom_density(aes(logit,color=case,fill=case), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab(&quot;logit (log-odds)&quot;)+
+  geom_rug(aes(logit,color=case))+
+  geom_text(x=-2,y=.2,label=&quot;TN = 40&quot;)+
+  geom_text(x=-1,y=.05,label=&quot;FN = 25&quot;)+
+  geom_text(x=0.5,y=0.05,label=&quot;FP = 42&quot;)+
+  geom_text(x=1,y=.25,label=&quot;TP = 139&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(plotROC)
+probs&lt;-predict(fit5,type=&quot;response&quot;)
+pred&lt;-ifelse(probs&gt;.5,1,0)
+ROCplot&lt;-ggplot(data5)+geom_roc(aes(d=y,m=probs),n.cuts=0)+
+  geom_segment(aes(x=0,xend=1,y=0,yend=1),lty=2)
+ROCplot</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.7671773</code></pre>
+<pre class="r"><code>class_diag&lt;-function(probs,truth){
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE)
+    truth&lt;-as.numeric(truth)-1
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  prediction&lt;-ifelse(probs&gt;.5,1,0)
+  acc=mean(truth==prediction)
+  sens=mean(prediction[truth==1]==1)
+  spec=mean(prediction[truth==0]==0)
+  ppv=mean(truth[prediction==1]==1)
+
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+set.seed(1234)
+k=10
+data&lt;-data5[sample(nrow(data5)),]
+folds&lt;-cut(seq(1:nrow(data5)),breaks=k,labels=F)
+diags&lt;-NULL
+for(i in 1:k){
+  train&lt;-data[folds!=i,]
+  test&lt;-data[folds==i,]
+  truth&lt;-test$y
+  fit5&lt;-glm(y~education+abortions+parity,data=data5,family=&quot;binomial&quot;)
+  probs&lt;-predict(fit5,newdata=test,type=&quot;response&quot;)
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)</code></pre>
+<pre><code>##     acc     sens      spec       ppv       auc
+## 1 0.727 0.515873 0.8495225 0.5917063 0.7867828</code></pre>
+<p>In this dataset, ‘case’ was selected as the binary categorical variable of interest. Within the category ‘case’, ‘case’ = 1 and ‘control’ = 0. 1/3 of observations are cases, while the remaining 2/3 are controls. odds = 0.28612 x (5.95203^edlow) x (1.75796^edmed) x (5.76612^ab) x (0.37768^par). The intercept, 0.28612, is the predicted odds of having a case patient for a high education level person when abortions and parity equals 0. Controlling for abortions and parity, having low education multiplies odds by a factor of 5.952 and having medium education multiplies odds by a factor of 1.758. When controlling for education and parity, going up one abortion multiplies odds by a factor of 5.766, whereas going up one parity multiplies odds by a factor of 0.378.
+Accuracy measures overall correctness and is 0.728. Sensitivity (TPR) is 0.488, the probability of detecting a case patient if they really are a case. Specificity (TNR) is 0.848, the probability of incorrect classification for controls. Recall (PPV) is 0.615, or the proportion classified as case who actually are.
+The AUC of the ROC plot was found to be 0.767, which is fair. In other words, it is somewhat difficult to predict whether an observation was a case or control based only on education level, number of abortions, and parity.<br />
+After performing 10-fold CV, the accuracy was 0.727, sensitivity was 0.516, and recall was 0.592.</p>
+<p>###6:</p>
+<pre class="r"><code>data6&lt;-data3%&gt;%mutate(y=ifelse(case==&quot;case&quot;,1,0))%&gt;%select(-case)
+library(glmnet)
+y&lt;-as.matrix(data6$y)
+x&lt;-model.matrix(y~.,data=data6)[,-1]
+head(x)</code></pre>
+<pre><code>##   educationlow educationmedium age parity induced spontaneous abortions
+## 1            1               0  26      6       1           2         3
+## 2            1               0  42      1       1           0         1
+## 3            1               0  39      6       2           0         2
+## 4            1               0  34      4       2           0         2
+## 5            0               1  35      3       1           1         2
+## 6            0               1  36      4       2           1         3
+##      age_c
+## 1 -5.45122
+## 2 10.54878
+## 3  7.54878
+## 4  2.54878
+## 5  3.54878
+## 6  4.54878</code></pre>
+<pre class="r"><code>cv&lt;-cv.glmnet(x,y)
+{plot(cv$glmnet.fit, &quot;lambda&quot;, label=TRUE); abline(v = log(cv$lambda.1se)); abline(v = log(cv$lambda.min),lty=2)}</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cv&lt;-cv.glmnet(x,y,family=&quot;binomial&quot;)
+lasso&lt;-glmnet(x,y,family=&quot;binomial&quot;,lambda=cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 9 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                          s0
+## (Intercept)     -1.10060253
+## educationlow     .         
+## educationmedium  .         
+## age              .         
+## parity           .         
+## induced          .         
+## spontaneous      0.47716364
+## abortions        0.09987413
+## age_c            .</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=10
+data1&lt;-data6[sample(nrow(data6)),]
+folds&lt;-cut(seq(1:nrow(data6)),breaks=k,labels=F)
+diags&lt;-NULL
+for(i in 1:k){          
+  train&lt;-data1[folds!=i,] 
+  test&lt;-data1[folds==i,] 
+  truth&lt;-test$y
+  fit6&lt;-glm(y~parity+spontaneous+abortions, data=train, family=&quot;binomial&quot;)
+  probs&lt;-predict(fit6,newdata=test,type=&quot;response&quot;)
+  
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+
+summarize_all(diags,mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.7146667 0.4845238 0.8576866 0.6214683 0.7846367</code></pre>
+<p>After running a LASSO regression, the variables most predictive of whether an observation was a case or a control were parity, spontaneous, and abortions. The resulting classification diagnostics were as follows: accuracy=0.715 sensitivity=0.485, specificity=0.858, recall=0.621, and AUC=0.785.
+When comparing this model’s out of sample accuracy to that of the logistic regression from part 5 (0.727), the accuracy here is slightly less, but is not substantially lower or higher. This shows that the original model was likely not overfitting, and there is not much preference for one over the other.</p>
+<pre><code>## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18362)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] glmnet_3.0-2      Matrix_1.2-18     plotROC_2.2.1     lmtest_0.9-37    
+##  [5] zoo_1.8-8         sandwich_2.5-1    viridis_0.5.1     viridisLite_0.3.0
+##  [9] ggplot2_3.3.0     dplyr_0.8.5      
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.4.6     plyr_1.8.6       pillar_1.4.4     compiler_4.0.0  
+##  [5] iterators_1.0.12 tools_4.0.0      digest_0.6.25    evaluate_0.14   
+##  [9] lifecycle_0.2.0  tibble_3.0.1     gtable_0.3.0     nlme_3.1-147    
+## [13] lattice_0.20-41  mgcv_1.8-31      pkgconfig_2.0.3  rlang_0.4.5     
+## [17] foreach_1.5.0    yaml_2.2.1       blogdown_0.18    xfun_0.13       
+## [21] gridExtra_2.3    withr_2.2.0      stringr_1.4.0    knitr_1.28      
+## [25] vctrs_0.2.4      grid_4.0.0       tidyselect_1.0.0 glue_1.4.0      
+## [29] R6_2.4.1         rmarkdown_2.1    bookdown_0.18    purrr_0.3.4     
+## [33] farver_2.0.3     magrittr_1.5     codetools_0.2-16 scales_1.1.0    
+## [37] ellipsis_0.3.0   htmltools_0.4.0  splines_4.0.0    assertthat_0.2.1
+## [41] shape_1.4.4      colorspace_1.4-1 labeling_0.3     stringi_1.4.6   
+## [45] munsell_0.5.0    crayon_1.3.4</code></pre>
+<pre><code>## [1] &quot;2020-05-09 08:28:00 CDT&quot;</code></pre>
+<pre><code>##           sysname           release           version          nodename 
+##         &quot;Windows&quot;          &quot;10 x64&quot;     &quot;build 18362&quot; &quot;DESKTOP-AO7C51H&quot; 
+##           machine             login              user    effective_user 
+##          &quot;x86-64&quot;           &quot;blee8&quot;           &quot;blee8&quot;           &quot;blee8&quot;</code></pre>
+</div>

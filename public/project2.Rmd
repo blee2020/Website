@@ -1,0 +1,275 @@
+---
+title: "PROJECT 2"
+author: "SDS348 Spring 2020"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+```
+
+Becky Lee bsl668
+
+---
+
+
+### 0: Introduction
+
+##### The 'infert' dataset in R was used for this project. Some information regarding the dataset was found online, due to some difficulty interpreting the variables and background of the study. The dataset is officially titled "Infertility after Spontaneous and Induced Abortion" and is based on a study published in 1976. The study aimed to see if there was a connection between infertility and abortions, both induced and spontaneous.
+
+##### There were eight variables in the dataset. 'case' indicated whether the patient was categorized as case or control. 'education' indicated level of education. The original dataset had 3 levels with the following years: 0-5, 6-11, or 12+. These were changed, respectively, to 'low', 'medium', and 'high'. The numeric variables were 'age', 'induced' (the number of induced abortions), 'spontaneous' (the number of spontaneous abortions), and 'parity' (total number of times patient gave birth). For the 'induced' and 'spontaneous' variables, 2 represents 2 or more.
+
+```{R}
+
+?infert
+data(infert)
+head(infert)
+infdata<-infert
+colnames(infdata)
+nrow(infdata)
+library(dplyr)
+infdata<-infdata%>%mutate(case=as.character(case),case=if_else(case=='1','case',case),case=if_else(case=='0','control',case),case = as.factor(case))
+infdata<-infdata%>%mutate(education=as.character(education),education=if_else(education=='0-5yrs','low',education),education=if_else(education=='6-11yrs','medium',education),education=if_else(education=='12+ yrs','high',education),education=as.factor(education))
+infdata$stratum<-factor(infdata$stratum)
+infdata$pooled.stratum<-factor(infdata$pooled.stratum)
+infdata<-infdata[(infdata$stratum!=74),]
+nrow(infdata)
+
+```
+  There were 83 case patients and 2 control patients per case patients, which give a total of 249 patients. Each control patient was similar to their respective case patient when it came to the other categories (eg. education, age, etc). However, the dataset shows there were 248 observations, where 83 were case patients and 165 were control patients. It was found that case 74 did not have 2 control cases, so it was removed. The resulting number of observations was 246, with 82 being cases and 164 being controls. 
+
+
+### 1:
+
+```{R}
+
+data1<-infdata
+data1$stratum<-data1$pooled.stratum<-data1$age<-NULL
+colnames(data1) #categorical: education, case #numeric: parity, induced, spontaneous
+summary(data1$case)
+
+man1<-manova(cbind(parity,induced,spontaneous)~education,data=data1)
+summary(man1)
+summary.aov(man1)
+pairwise.t.test(data1$parity,data1$education,p.adj="none")
+pairwise.t.test(data1$induced,data1$education,p.adj="none")
+1-0.95^10
+0.5/10
+pairwise.t.test(data1$parity,data1$education,p.adj="bonf")
+pairwise.t.test(data1$induced,data1$education,p.adj="bonf")
+
+```
+  MANOVA hypotheses - H0: For all three dependent variables (parity, induced, spontaneous), means for each education group are equal. HA: For at least one dependent variable, at least one education group mean is different. A one-way MANOVA was performed to see the effect of education level on the following three dependent variables: parity, induced, spontaneous. Based on the results from the MANOVA test, the null hypothesis was rejected, since significant differences were found among education levels for at least one dependent variable, Pillai trace=0.2961, pseudo F(6,484)=14.018, p<0.0001.
+  To determine which of the dependent variables showed a mean difference among education groups, a univariate ANOVA and post-hoc t tests was performed. The 'parity' and 'induced' variables only showed significant mean differences. Post hoc analysis showed that low education levels differed significantly from the other levels (medium and high). 
+  1 MANOVA, 3 ANOVAs, and 6 t tests were done. The probability of at least one Type I error (unadjusted) is as follows: 1 - 0.95^10 = 0.4012631, or 40%. After adjusting the significance level, alpha' = 0.5/10 = 0.05, or 5%. Even after Bonferroni correction, the differences were significant.
+  MANOVA has many assumptions, and from a glance, not all of them would have been met. The 'infert' data did have random samples and independent observations. However, it is unclear whether the data met the other assumptions. It is likely that some variables, such as parity and spontaneous, induced abortions were correlated. In addition, it would be difficult to determine multivariate normality or homogeneity since 'induced' and 'spontaneous' each have only 3 dicrete values.
+
+
+### 2:
+
+```{R}
+
+summary(aov(parity~education,data=data1))
+obs_F<-27.69
+Fs<-replicate(5000,{
+  new<-data1%>%mutate(parity=sample(parity))
+  SSW<-new%>%group_by(education)%>%summarize(SSW=sum((parity-mean(parity))^2))%>%summarize(sum(SSW))%>%pull
+  SSB<-new%>%mutate(mean=mean(parity))%>%group_by(education)%>%mutate(groupmean=mean(parity))%>%
+    summarize(SSB=sum((mean-groupmean)^2))%>%summarize(sum(SSB))%>%pull
+  (SSB/2)/(SSW/243)
+})
+hist(Fs, prob=T,xlim=c(0,30));abline(v=obs_F, col="red",add=T)
+mean(Fs>obs_F)
+
+```
+  A randomization test was performed, where the data was scrambled, and the actual F statistic from 1. was compared to the null distribution. If the actual F statistic is not a realistic value in the null distribution, the null hypothesis could be rejected, meaning that the group means were not all equal. Since the most significant variable was parity, this randomization test focused on parity as the response variable and education. 
+  H0: For the dependent variable parity, means among education groups are equal. HA: For parity, means among education groups are not equal. The test results showed that none of the 5000 F statistics generated were larger than the actual F=27.69. As a result, this supports rejection of the null hypothesis and that the education groups are different.
+
+
+### 3:
+
+```{R}
+
+data3<-infdata%>%mutate(abortions=induced+spontaneous)
+data3$stratum<-data3$pooled.stratum<-NULL
+head(data3)
+
+data3$age_c<-data3$age-mean(data3$age)
+fit3<-lm(abortions~case+age_c+case:age_c,data=data3)
+summary(fit3)
+data3$case<-relevel(data3$case,ref="control")
+fit3<-lm(abortions~case+age_c+case:age_c,data=data3)
+summary(fit3)
+
+library(ggplot2)
+ggplot(data3, aes(x=age_c,y=abortions,group=case))+geom_point(aes(color=case))+
+  geom_smooth(method="lm",formula=y~1,se=F,fullrange=T,aes(color=case))+xlab("age (centered)")+
+  ggtitle("t-test controlling for age")
+library(viridis)
+ggplot(data3,aes(x=age_c,y=..density..,fill=case))+geom_histogram(binwidth=3,alpha=0.5,position="identity")+facet_wrap(~abortions)
+
+resids<-fit3$residuals
+shapiro.test(resids)
+fitted<-fit3$fitted.values
+ggplot()+geom_point(aes(fitted,resids))+geom_hline(yintercept=0,color='red')
+library(sandwich); library(lmtest)
+bptest(fit3)
+
+summary(fit3)$coef[,1:2]
+coeftest(fit3,vcov=vcovHC(fit3))[,1:2]
+
+summary(fit3)
+
+```
+  For this test, a new variable 'abortions' was made, which gave the total number of abortions for a patient, both spontaneous and induced. H0: The variables case and age do not explain variation in abortions. HA: The variables case and age do explain variation in abortions. abortions = b0 + b1(case) + b2(age) + b3(case*age). Numeric variable age was centered. Categorical variable case was not. However, the reference group was changed to 'control' cases.
+  The intercept is 0.94512, which represents the predicted number of abortions for an average age control observation. Controlling for age, abortions in the case group is 0.59146 units higher than in the control group on average. Controlling for case category, average aged women show a decrease of 0.04302 abortions for every 1 year increase in age on average. The slope for case category on age is 0.04532 higher for cases relative to controls.
+  The Shapiro-Wilk normality test was performed, and it showed that the true distribution is not normal. The linearity and homoskedsaticity assumptions were checked visually with a scatterplot of reiduals and fitted values from the model. Based on eyeballing the plot and the clear pattern of the dots, it appeared that these assumptions were violated. However, the Breusch-Pagan test officially tested homoskedasticity and rejected the null hypothesis that the model was homoskedastic.
+  After correcting the standard error, there was little change in the results. The standard errors in the "after" table only differ at the third decimal, which are slightly larger than the "before". The R^2 value shows the proportion of variation in the response variable explained by the model. R^2 = 0.1414. Adjusted R^2 which includes the penalty due to chance associations = 0.1308. In other words approximately 13-14% of variability in abortions in explained. 
+
+
+### 4:
+
+```{R}
+
+fit3<-lm(abortions~case+age_c+case:age_c,data=data3)
+samp_distn<-replicate(5000, {
+  boot_dat<-sample_frac(data3,replace=T)
+  fit3<-lm(abortions~case+age_c+case:age_c,data=boot_dat)
+  coef(fit3)
+})
+resids<-fit3$residuals
+fitted<-fit3$fitted.values
+resid_resamp<-replicate(5000,{
+  new_resids<-sample(resids,replace=TRUE)
+  data3$new_y<-fitted+new_resids
+  fit3<-lm(new_y~case+age_c+case:age_c,data=data3)
+  coef(fit3)
+})
+summary(fit3)$coef[,1:2]
+coeftest(fit3,vcov=vcovHC(fit3))[,1:2]
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+resid_resamp%>%t%>%as.data.frame%>%summarize_all(sd)
+
+```
+  Bootstrapping the regression estimates was useful, due to some assumptions that were violated. The standard errors for itnercept, casecase, age_c, and casecase:age_c are shown above. There are slight differences among the normal-theory SEs, robust SEs, and boostrapped SEs (both resampling rows and resampling residuals). The normal-theory and robust SEs were slightly larger than the bootstrapped SEs, which is expected since bootstrapped SEs are the variation of random sample means. 
+
+
+###5:
+
+```{R}
+
+data5<-data3%>%mutate(y=ifelse(case=="case",1,0))
+head(data5)
+fit5<-glm(y~education+abortions+parity,data=data5,family="binomial")
+coeftest(fit5)
+exp(coef(fit5))%>%round(5)
+
+probs<-predict(fit5,type="response")
+table(predict=as.numeric(probs>.5),truth=data5$y)%>%addmargins
+(139+40)/246
+40/82
+139/164
+40/65
+
+data5$logit<-predict(fit5,type="link")
+data5%>%ggplot()+geom_density(aes(logit,color=case,fill=case), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab("logit (log-odds)")+
+  geom_rug(aes(logit,color=case))+
+  geom_text(x=-2,y=.2,label="TN = 40")+
+  geom_text(x=-1,y=.05,label="FN = 25")+
+  geom_text(x=0.5,y=0.05,label="FP = 42")+
+  geom_text(x=1,y=.25,label="TP = 139")
+library(plotROC)
+probs<-predict(fit5,type="response")
+pred<-ifelse(probs>.5,1,0)
+ROCplot<-ggplot(data5)+geom_roc(aes(d=y,m=probs),n.cuts=0)+
+  geom_segment(aes(x=0,xend=1,y=0,yend=1),lty=2)
+ROCplot
+calc_auc(ROCplot)
+
+class_diag<-function(probs,truth){
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE)
+    truth<-as.numeric(truth)-1
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  prediction<-ifelse(probs>.5,1,0)
+  acc=mean(truth==prediction)
+  sens=mean(prediction[truth==1]==1)
+  spec=mean(prediction[truth==0]==0)
+  ppv=mean(truth[prediction==1]==1)
+
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  TPR=cumsum(truth)/max(1,sum(truth))
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+set.seed(1234)
+k=10
+data<-data5[sample(nrow(data5)),]
+folds<-cut(seq(1:nrow(data5)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){
+  train<-data[folds!=i,]
+  test<-data[folds==i,]
+  truth<-test$y
+  fit5<-glm(y~education+abortions+parity,data=data5,family="binomial")
+  probs<-predict(fit5,newdata=test,type="response")
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)
+```
+  In this dataset, 'case' was selected as the binary categorical variable of interest. Within the category 'case', 'case' = 1 and 'control' = 0. 1/3 of observations are cases, while the remaining 2/3 are controls. odds = 0.28612 x (5.95203^edlow) x (1.75796^edmed) x (5.76612^ab) x (0.37768^par). The intercept, 0.28612, is the predicted odds of having a case patient for a high education level person when abortions and parity equals 0. Controlling for abortions and parity, having low education multiplies odds by a factor of 5.952 and having medium education multiplies odds by a factor of 1.758. When controlling for education and parity, going up one abortion multiplies odds by a factor of 5.766, whereas going up one parity multiplies odds by a factor of 0.378.
+  Accuracy measures overall correctness and is 0.728. Sensitivity (TPR) is 0.488, the probability of detecting a case patient if they really are a case. Specificity (TNR) is 0.848, the probability of incorrect classification for controls. Recall (PPV) is 0.615, or the proportion classified as case who actually are.
+  The AUC of the ROC plot was found to be 0.767, which is fair. In other words, it is somewhat difficult to predict whether an observation was a case or control based only on education level, number of abortions, and parity.    
+  After performing 10-fold CV, the accuracy was 0.727, sensitivity was 0.516, and recall was 0.592.
+  
+
+###6:
+
+```{R}
+data6<-data3%>%mutate(y=ifelse(case=="case",1,0))%>%select(-case)
+library(glmnet)
+y<-as.matrix(data6$y)
+x<-model.matrix(y~.,data=data6)[,-1]
+head(x)
+cv<-cv.glmnet(x,y)
+{plot(cv$glmnet.fit, "lambda", label=TRUE); abline(v = log(cv$lambda.1se)); abline(v = log(cv$lambda.min),lty=2)}
+cv<-cv.glmnet(x,y,family="binomial")
+lasso<-glmnet(x,y,family="binomial",lambda=cv$lambda.1se)
+coef(lasso)
+
+set.seed(1234)
+k=10
+data1<-data6[sample(nrow(data6)),]
+folds<-cut(seq(1:nrow(data6)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){          
+  train<-data1[folds!=i,] 
+  test<-data1[folds==i,] 
+  truth<-test$y
+  fit6<-glm(y~parity+spontaneous+abortions, data=train, family="binomial")
+  probs<-predict(fit6,newdata=test,type="response")
+  
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+summarize_all(diags,mean)
+```
+  After running a LASSO regression, the variables most predictive of whether an observation was a case or a control were parity, spontaneous, and abortions. The resulting classification diagnostics were as follows: accuracy=0.715 sensitivity=0.485, specificity=0.858, recall=0.621, and AUC=0.785. 
+  When comparing this model's out of sample accuracy to that of the logistic regression from part 5 (0.727), the accuracy here is slightly less, but is not substantially lower or higher. This shows that the original model was likely not overfitting, and there is not much preference for one over the other.
+
+
+```{R, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+Sys.time()
+Sys.info()
+```
