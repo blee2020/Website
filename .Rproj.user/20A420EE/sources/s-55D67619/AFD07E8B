@@ -1,19 +1,19 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1589064396095.000,
+    "created" : 1589065935520.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2761145008",
-    "id" : "30A93C3F",
-    "lastKnownWriteTime" : 1589065070,
-    "last_content_update" : 1589065070159,
+    "hash" : "560891271",
+    "id" : "AFD07E8B",
+    "lastKnownWriteTime" : 1589065942,
+    "last_content_update" : 1589065942017,
     "path" : "~/SDS 348/Website/config.toml",
     "project_path" : "config.toml",
     "properties" : {
-        "cursorPosition" : "29,15",
-        "scrollLine" : "24"
+        "cursorPosition" : "28,14",
+        "scrollLine" : "22"
     },
     "read_only" : false,
     "read_only_alternatives" : [

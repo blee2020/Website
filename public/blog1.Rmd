@@ -63,6 +63,3 @@ To see if being Legendary significantly affects a pokemon's stats, we could face
 
 That's the end of the tutorial, but there is plenty more to explore in Python! Good luck.
 
-
-
-

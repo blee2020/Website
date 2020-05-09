@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on Becky&#39;s Portfolio</title>
+    <link>/categories/python/</link>
+    <description>Recent content in Python on Becky&#39;s Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Organizing and Visualizing Data in Python</title>
+      <link>/blog/organizing-and-visualizing-data-in-python/</link>
+      <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/organizing-and-visualizing-data-in-python/</guid>
+      <description>Hello world! Welcome to my very first blog post. This beginner level guide will show you various ways of organizing and visualizing data using Python. Everything is at the beginner level! Let’s get started.
+For this tutorial style walkthrough, we’ll be working with the pokemon dataset, renamed ‘poke’ here for convenience. The python packages ‘pandas’ and ‘seaborn’ will come in handy too!
+Now that we are somewhat familiar with the dataset, we could start organizing and trying different functions.</description>
+    </item>
+    
+    <item>
+      <title>Organizing Data With Python</title>
+      <link>/2020/05/09/organizing-data-with-python/</link>
+      <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/09/organizing-data-with-python/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
