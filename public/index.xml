@@ -13,17 +13,6 @@
     
     <item>
       <title>Organizing and Visualizing Data in Python</title>
-      <link>/organizing-and-visualizing-data-in-python/</link>
-      <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/organizing-and-visualizing-data-in-python/</guid>
-      <description>Hello world! Welcome to my very first blog post. This beginner level guide will show you various ways of organizing and visualizing data using Python. Everything is at the beginner level! Let’s get started.
-For this tutorial style walkthrough, we’ll be working with the pokemon dataset, renamed ‘poke’ here for convenience. The python packages ‘pandas’ and ‘seaborn’ will come in handy too!
-Now that we are somewhat familiar with the dataset, we could start organizing and trying different functions.</description>
-    </item>
-    
-    <item>
-      <title>Organizing and Visualizing Data in Python</title>
       <link>/blog/organizing-and-visualizing-data-in-python/</link>
       <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
       
@@ -61,6 +50,16 @@ Now that we are somewhat familiar with the dataset, we could start organizing an
       <guid>/project2/</guid>
       <description>Becky Lee bsl668
 0: IntroductionThe ‘infert’ dataset in R was used for this project. Some information regarding the dataset was found online, due to some difficulty interpreting the variables and background of the study. The dataset is officially titled “Infertility after Spontaneous and Induced Abortion” and is based on a study published in 1976. The study aimed to see if there was a connection between infertility and abortions, both induced and spontaneous.</description>
+    </item>
+    
+    <item>
+      <title>Blogs</title>
+      <link>/blog1/</link>
+      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      
+      <guid>/blog1/</guid>
+      <description>Blogs Here are my blog posts:
+ Blog 1: Organizing and Visualizing Data with Python  </description>
     </item>
     
     <item>
