@@ -1,0 +1,11 @@
+---
+title: Organizing Data in Python
+author: Becky Lee
+date: '2020-05-09'
+slug: organizing-data-in-python
+categories:
+  - Datasets
+  - Python
+tags: []
+description: ''
+---

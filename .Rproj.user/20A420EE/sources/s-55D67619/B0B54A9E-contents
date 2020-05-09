@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[177]:
+
+
+import pandas as pd
+import seaborn as sns
+pokemon=pd.read_csv("pokemon.csv",index_col=0)
+poke=pokemon
+poke.head()
+
+
+# In[178]:
+
+
+poke.iloc[:,[0,4,5,6]].head()
+
+
+# In[179]:
+
+
+poke1=poke[["Name","HP","Attack","Defense"]]
+poke1.head()
+
+
+# In[180]:
+
+
+poke1["HP"].mean()
+
+
+# In[181]:
+
+
+poke1[poke1["HP"] > 69.25875].count()
+
+
+# In[182]:
+
+
+poke2 = poke[(poke["HP"] > 69.25875)]
+poke2['Total']=poke2['Attack']+poke2['Defense']
+poke2.head()
+
+
+# In[183]:
+
+
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.scatter(poke['Attack'], poke['Defense'])
+ax.set_title('Pokemon Dataset')
+ax.set_xlabel('Attack')
+ax.set_ylabel('Defense')
+
+
+# In[184]:
+
+
+poke2.plot.hist(subplots=True, layout=(3,3), figsize=(10, 10), bins=30)
+
+
+# In[185]:
+
+
+import numpy as np
+
+corr = poke.corr()
+im = ax.imshow(corr.values)
+corr
+
+
+# In[186]:
+
+
+import seaborn as sns
+
+sns.heatmap(poke.corr(), annot=True)
+
+
+# In[187]:
+
+
+g = sns.FacetGrid(poke, col='Legendary')
+g = g.map(sns.kdeplot, 'Speed')
+
+
+# In[ ]:
+
+
+
+

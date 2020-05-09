@@ -1,0 +1,5 @@
+"0","knitr::opts_chunk$set(collapse = TRUE)"
+"0","library(reticulate)"
+"0","use_python(""C:\Python32"")"
+"2","Error: '\P' is an unrecognized escape in character string starting """"C:\P""
+"
