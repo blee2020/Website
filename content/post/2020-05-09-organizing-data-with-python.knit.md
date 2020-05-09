@@ -1,5 +1,5 @@
 ---
-title: "Python Blogs"
+title: "Organizing Data With Python"
 author: "Becky Lee"
 date: '2020-05-09'
 description: ''
@@ -10,11 +10,7 @@ categories:
 - Datasets
 ---
 
-## Blog 
 
-Here is my blog page.
-
-- [1: Organizing and Visualizing Data with Python](/blog/)
 
 
 
