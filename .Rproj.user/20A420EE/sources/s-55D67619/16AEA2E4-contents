@@ -54,9 +54,8 @@
           <img class="img-circle" src="/img/profile.JPG" alt="It me." height=200px width=200px >
         </div>
         <h3>I'm <strong>Becky Lee</strong>, a previous biology major at UT Austin.</h3>
-        <h3>I enjoy coding and blogging.</h3>
+        <h3>I enjoy coding and <a href="/blog1/"> blogging</a>.</h3>
         <h3>Here are some of my past <a href="/projects/"> projects</a>.</h3>
-        <h3>And here is a link to my <a href="/blog1.Rmd/"> blogs</a>.</h3>
         <h3>For more check out my academic &amp; professional <a href="resume.pdf" target="_blank">resume</a>.</h3>
         <h3>Contact me by <a href="mailto:blee8648@utexas.edu">email</a>.</h3>
         <div class="social">
