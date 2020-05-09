@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "4261029352",
+    "hash" : "1684032095",
     "id" : "B704E686",
-    "lastKnownWriteTime" : 1589049373,
-    "last_content_update" : 1589049373,
+    "lastKnownWriteTime" : 1589061218,
+    "last_content_update" : 1589061218195,
     "path" : "~/SDS 348/Website/content/blog/pythontutorial.Rmd",
     "project_path" : "content/blog/pythontutorial.Rmd",
     "properties" : {
-        "cursorPosition" : "10,47",
-        "scrollLine" : "0"
+        "cursorPosition" : "63,89",
+        "scrollLine" : "56"
     },
     "read_only" : false,
     "read_only_alternatives" : [
