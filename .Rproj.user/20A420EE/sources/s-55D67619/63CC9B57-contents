@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Becky Lee" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>PROJECT 1</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">PROJECT 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          May 9, 2020
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Becky Lee bsl668</p>
+<hr />
+<p>###1: Introduction</p>
+<p>#####The dataset `weather’, aquired from a list of data in R, contains 15 variables and 26,115 observations. As an individual who checks the weather daily, this dataset caught my attention. In addition, there was a wide number and variety of variables, which would give flexibility when tinkering with the data. The 15 variables include origin, a time ID, year, month, day, hour, temperature, dew point, humidity, wind direction, wind speed, wind gust, precipitation, pressure, and visibility. For purposes of this project, this dataset was divided into 2 separate datasets, with the non-numeric variables (time_hour and origin) being the only common variables.</p>
+<p>#####Although there are 3 origins, since all weather measurements were taken in a similar vicinity, the data would likely not vary greatly among those origins. When I check the weather, there tends to be a positive association between humidity and precipitation. I predict that this will be the case with this dataset as well. In addition, temperatures will most definitely be lower in the winter and higher in the summer for all locaitons.</p>
+<pre class="r"><code>library(nycflights13)
+library(dplyr)
+library(tidyr)
+head(weather)</code></pre>
+<pre><code>## # A tibble: 6 x 15
+##   origin  year month   day  hour  temp  dewp humid wind_dir wind_speed wind_gust
+##   &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 EWR     2013     1     1     1  39.0  26.1  59.4      270      10.4         NA
+## 2 EWR     2013     1     1     2  39.0  27.0  61.6      250       8.06        NA
+## 3 EWR     2013     1     1     3  39.0  28.0  64.4      240      11.5         NA
+## 4 EWR     2013     1     1     4  39.9  28.0  62.2      250      12.7         NA
+## 5 EWR     2013     1     1     5  39.0  28.0  64.4      260      12.7         NA
+## 6 EWR     2013     1     1     6  37.9  28.0  67.2      240      11.5         NA
+## # ... with 4 more variables: precip &lt;dbl&gt;, pressure &lt;dbl&gt;, visib &lt;dbl&gt;,
+## #   time_hour &lt;dttm&gt;</code></pre>
+<pre class="r"><code>weather1&lt;-weather%&gt;%drop_na(&quot;temp&quot;)
+weath&lt;-weather1%&gt;%select(-contains(&quot;wind&quot;))
+wind&lt;-weather1%&gt;%select(&quot;origin&quot;,contains(&quot;_&quot;))
+head(weather1)</code></pre>
+<pre><code>## # A tibble: 6 x 15
+##   origin  year month   day  hour  temp  dewp humid wind_dir wind_speed wind_gust
+##   &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 EWR     2013     1     1     1  39.0  26.1  59.4      270      10.4         NA
+## 2 EWR     2013     1     1     2  39.0  27.0  61.6      250       8.06        NA
+## 3 EWR     2013     1     1     3  39.0  28.0  64.4      240      11.5         NA
+## 4 EWR     2013     1     1     4  39.9  28.0  62.2      250      12.7         NA
+## 5 EWR     2013     1     1     5  39.0  28.0  64.4      260      12.7         NA
+## 6 EWR     2013     1     1     6  37.9  28.0  67.2      240      11.5         NA
+## # ... with 4 more variables: precip &lt;dbl&gt;, pressure &lt;dbl&gt;, visib &lt;dbl&gt;,
+## #   time_hour &lt;dttm&gt;</code></pre>
+<div id="section" class="section level3">
+<h3>2:</h3>
+<div id="the-data-in-the-newly-made-datasets-weath-and-wind-was-tidy.-below-is-the-untidy-version-of-the-two-datasets." class="section level5">
+<h5>The data in the newly made datasets ‘weath’ and ‘wind’ was tidy. Below is the untidy version of the two datasets.</h5>
+<pre class="r"><code>untidyweath&lt;-weath%&gt;%pivot_wider(names_from=&quot;origin&quot;, values_from=&quot;temp&quot;)
+untidywind&lt;-wind%&gt;%rename(&quot;timestamp&quot;=&quot;time_hour&quot;)
+glimpse(untidyweath)</code></pre>
+<pre><code>## Rows: 26,042
+## Columns: 13
+## $ year      &lt;int&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 201...
+## $ month     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ day       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+## $ hour      &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18...
+## $ dewp      &lt;dbl&gt; 26.06, 26.96, 28.04, 28.04, 28.04, 28.04, 28.04, 28.04, 2...
+## $ humid     &lt;dbl&gt; 59.37, 61.63, 64.43, 62.21, 64.43, 67.21, 64.43, 62.21, 6...
+## $ precip    &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ pressure  &lt;dbl&gt; 1012.0, 1012.3, 1012.5, 1012.2, 1011.9, 1012.4, 1012.2, 1...
+## $ visib     &lt;dbl&gt; 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 1...
+## $ time_hour &lt;dttm&gt; 2013-01-01 01:00:00, 2013-01-01 02:00:00, 2013-01-01 03:...
+## $ EWR       &lt;dbl&gt; 39.02, 39.02, 39.02, 39.92, 39.02, 37.94, 39.02, 39.92, 3...
+## $ JFK       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ LGA       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...</code></pre>
+<pre class="r"><code>glimpse(untidywind)</code></pre>
+<pre><code>## Rows: 26,114
+## Columns: 5
+## $ origin     &lt;chr&gt; &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, ...
+## $ wind_dir   &lt;dbl&gt; 270, 250, 240, 250, 260, 240, 240, 250, 260, 260, 260, 3...
+## $ wind_speed &lt;dbl&gt; 10.35702, 8.05546, 11.50780, 12.65858, 12.65858, 11.5078...
+## $ wind_gust  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ timestamp  &lt;dttm&gt; 2013-01-01 01:00:00, 2013-01-01 02:00:00, 2013-01-01 03...</code></pre>
+</div>
+</div>
+<div id="section-1" class="section level3">
+<h3>3:</h3>
+<div id="the-untidy-datasets-were-made-tidy." class="section level5">
+<h5>The untidy datasets were made tidy.</h5>
+<pre class="r"><code>weathdata&lt;-untidyweath%&gt;%pivot_longer(cols=c(&quot;EWR&quot;,&quot;JFK&quot;,&quot;LGA&quot;),names_to=&quot;origin&quot;,values_to=&quot;temp&quot;)%&gt;%
+  drop_na(&quot;temp&quot;)%&gt;%
+  rename(&quot;timestamp&quot;=&quot;time_hour&quot;)
+winddata&lt;-untidywind</code></pre>
+</div>
+</div>
+<div id="section-2" class="section level3">
+<h3>4:</h3>
+<div id="the-two-datasets-were-joined-into-one." class="section level5">
+<h5>The two datasets were joined into one.</h5>
+<pre class="r"><code>mydata&lt;-weathdata%&gt;%left_join(winddata,by=c(&quot;timestamp&quot;,&quot;origin&quot;))
+glimpse(mydata)</code></pre>
+<pre><code>## Rows: 26,114
+## Columns: 15
+## $ year       &lt;int&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 20...
+## $ month      &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+## $ day        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+## $ hour       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 1...
+## $ dewp       &lt;dbl&gt; 26.06, 26.96, 28.04, 28.04, 28.04, 28.04, 28.04, 28.04, ...
+## $ humid      &lt;dbl&gt; 59.37, 61.63, 64.43, 62.21, 64.43, 67.21, 64.43, 62.21, ...
+## $ precip     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ pressure   &lt;dbl&gt; 1012.0, 1012.3, 1012.5, 1012.2, 1011.9, 1012.4, 1012.2, ...
+## $ visib      &lt;dbl&gt; 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, ...
+## $ timestamp  &lt;dttm&gt; 2013-01-01 01:00:00, 2013-01-01 02:00:00, 2013-01-01 03...
+## $ origin     &lt;chr&gt; &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, ...
+## $ temp       &lt;dbl&gt; 39.02, 39.02, 39.02, 39.92, 39.02, 37.94, 39.02, 39.92, ...
+## $ wind_dir   &lt;dbl&gt; 270, 250, 240, 250, 260, 240, 240, 250, 260, 260, 260, 3...
+## $ wind_speed &lt;dbl&gt; 10.35702, 8.05546, 11.50780, 12.65858, 12.65858, 11.5078...
+## $ wind_gust  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...</code></pre>
+<p>Both datasets had the same number of observations, with the common variable ‘timestamp’ present in both datasets. In each dataset, each row corresponded to one in the other dataset. Therefore, it would not matter which join was used here. Left join was used, due to it being the most familiar. No rows were dropped following the join.</p>
+</div>
+</div>
+<div id="section-3" class="section level3">
+<h3>5:</h3>
+<div id="to-simplify-the-data-some-columns-of-data-were-removed.-the-remaining-columns-were-also-reordered." class="section level5">
+<h5>To simplify the data, some columns of data were removed. The remaining columns were also reordered.</h5>
+<pre class="r"><code>mydata&lt;-mydata%&gt;%select(timestamp,month,day,hour,origin,temp,dewp,humid,precip,pressure,wind_dir,wind_speed)
+glimpse(mydata)</code></pre>
+<pre><code>## Rows: 26,114
+## Columns: 12
+## $ timestamp  &lt;dttm&gt; 2013-01-01 01:00:00, 2013-01-01 02:00:00, 2013-01-01 03...
+## $ month      &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+## $ day        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+## $ hour       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 1...
+## $ origin     &lt;chr&gt; &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, &quot;EWR&quot;, ...
+## $ temp       &lt;dbl&gt; 39.02, 39.02, 39.02, 39.92, 39.02, 37.94, 39.02, 39.92, ...
+## $ dewp       &lt;dbl&gt; 26.06, 26.96, 28.04, 28.04, 28.04, 28.04, 28.04, 28.04, ...
+## $ humid      &lt;dbl&gt; 59.37, 61.63, 64.43, 62.21, 64.43, 67.21, 64.43, 62.21, ...
+## $ precip     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+## $ pressure   &lt;dbl&gt; 1012.0, 1012.3, 1012.5, 1012.2, 1011.9, 1012.4, 1012.2, ...
+## $ wind_dir   &lt;dbl&gt; 270, 250, 240, 250, 260, 240, 240, 250, 260, 260, 260, 3...
+## $ wind_speed &lt;dbl&gt; 10.35702, 8.05546, 11.50780, 12.65858, 12.65858, 11.5078...</code></pre>
+<p>###6:</p>
+</div>
+<div id="below-shows-exploration-of-the-new-dataset.-questions-were-answered-using-a-combination-of-dplyr-functions-and-summary-statistics." class="section level5">
+<h5>Below shows exploration of the new dataset. Questions were answered using a combination of ‘dplyr’ functions and summary statistics.</h5>
+<p>#####1) What was the average precipitation based on observations where there was rain for each origin?
+#####2) Make a new column which tells whether or not there was rain for each observation.
+#####3) For the origin containing the highest recorded temperature, what is the date the highest temperature was recorded?
+#####4) Which location has the lowest average temperature in December?
+#####5) What date experienced the maximum windspeed out of the data from JFK?
+#####6) What was the average humidity on days where there was rain?
+#####7) What is the correlation between temperature and humidity?
+#####8) Create a correlation matrix.
+#####9) What were the median temperatures for each location in March 2013?
+#####10) What is the temperature range for LGA in June 2013?
+#####11) How many observations had a pressure &lt; 1000 mb and wind speed &lt; 20 mph?
+#####12) Of those observations from above, how many were there for each location?
+#####13) Across all locations, what hour of the day is the warmest in the month of August?</p>
+<pre class="r"><code>q1&lt;-mydata%&gt;%group_by(origin)%&gt;%filter(precip&gt;0)%&gt;%summarize(avg_prec=mean(precip))
+q1</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   origin avg_prec
+##   &lt;chr&gt;     &lt;dbl&gt;
+## 1 EWR      0.0735
+## 2 JFK      0.0602
+## 3 LGA      0.0661</code></pre>
+<pre class="r"><code>q2&lt;-mydata%&gt;%mutate(rain=case_when(precip&gt;0 ~&quot;yes&quot;,precip==0 ~&quot;no&quot;))
+q2</code></pre>
+<pre><code>## # A tibble: 26,114 x 13
+##    timestamp           month   day  hour origin  temp  dewp humid precip
+##    &lt;dttm&gt;              &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+##  1 2013-01-01 01:00:00     1     1     1 EWR     39.0  26.1  59.4      0
+##  2 2013-01-01 02:00:00     1     1     2 EWR     39.0  27.0  61.6      0
+##  3 2013-01-01 03:00:00     1     1     3 EWR     39.0  28.0  64.4      0
+##  4 2013-01-01 04:00:00     1     1     4 EWR     39.9  28.0  62.2      0
+##  5 2013-01-01 05:00:00     1     1     5 EWR     39.0  28.0  64.4      0
+##  6 2013-01-01 06:00:00     1     1     6 EWR     37.9  28.0  67.2      0
+##  7 2013-01-01 07:00:00     1     1     7 EWR     39.0  28.0  64.4      0
+##  8 2013-01-01 08:00:00     1     1     8 EWR     39.9  28.0  62.2      0
+##  9 2013-01-01 09:00:00     1     1     9 EWR     39.9  28.0  62.2      0
+## 10 2013-01-01 10:00:00     1     1    10 EWR     41    28.0  59.6      0
+## # ... with 26,104 more rows, and 4 more variables: pressure &lt;dbl&gt;,
+## #   wind_dir &lt;dbl&gt;, wind_speed &lt;dbl&gt;, rain &lt;chr&gt;</code></pre>
+<pre class="r"><code>q3&lt;-mydata%&gt;%group_by(origin)%&gt;%summarise(max_temp=max(temp))
+q3.&lt;-mydata%&gt;%filter(origin==&quot;EWR&quot;)%&gt;%select(timestamp,origin,temp)%&gt;%arrange(desc(temp))
+q3.</code></pre>
+<pre><code>## # A tibble: 8,702 x 3
+##    timestamp           origin  temp
+##    &lt;dttm&gt;              &lt;chr&gt;  &lt;dbl&gt;
+##  1 2013-07-18 15:00:00 EWR    100. 
+##  2 2013-07-19 16:00:00 EWR    100. 
+##  3 2013-07-19 13:00:00 EWR     99.0
+##  4 2013-07-19 14:00:00 EWR     99.0
+##  5 2013-07-19 15:00:00 EWR     99.0
+##  6 2013-07-18 12:00:00 EWR     98.1
+##  7 2013-07-18 13:00:00 EWR     98.1
+##  8 2013-07-18 14:00:00 EWR     98.1
+##  9 2013-07-18 16:00:00 EWR     98.1
+## 10 2013-07-18 17:00:00 EWR     98.1
+## # ... with 8,692 more rows</code></pre>
+<pre class="r"><code>q4&lt;-mydata%&gt;%group_by(origin)%&gt;%filter(month==&quot;12&quot;)%&gt;%summarise(avg_temp=mean(temp))
+q4</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   origin avg_temp
+##   &lt;chr&gt;     &lt;dbl&gt;
+## 1 EWR        38.0
+## 2 JFK        38.6
+## 3 LGA        38.8</code></pre>
+<pre class="r"><code>q5&lt;-mydata%&gt;%filter(origin==&quot;JFK&quot;)%&gt;%select(timestamp,wind_speed)%&gt;%arrange(desc(wind_speed))
+q5</code></pre>
+<pre><code>## # A tibble: 8,706 x 2
+##    timestamp           wind_speed
+##    &lt;dttm&gt;                   &lt;dbl&gt;
+##  1 2013-01-31 04:00:00       42.6
+##  2 2013-03-06 14:00:00       38.0
+##  3 2013-01-31 03:00:00       36.8
+##  4 2013-01-31 07:00:00       36.8
+##  5 2013-11-24 10:00:00       36.8
+##  6 2013-01-31 01:00:00       35.7
+##  7 2013-01-31 08:00:00       35.7
+##  8 2013-01-31 14:00:00       35.7
+##  9 2013-11-27 04:00:00       35.7
+## 10 2013-01-31 17:00:00       34.5
+## # ... with 8,696 more rows</code></pre>
+<pre class="r"><code>q6&lt;-q2%&gt;%filter(rain==&quot;yes&quot;)%&gt;%summarise(avg_hum=mean(humid))
+q6</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   avg_hum
+##     &lt;dbl&gt;
+## 1    89.2</code></pre>
+<pre class="r"><code>q7&lt;-mydata%&gt;%na.omit%&gt;%select(temp,humid)
+q7.&lt;-cor(q7)
+q7.</code></pre>
+<pre><code>##            temp     humid
+## temp  1.0000000 0.1071538
+## humid 0.1071538 1.0000000</code></pre>
+<pre class="r"><code>q8&lt;-mydata%&gt;%na.omit%&gt;%select(-month,-day,-hour,-timestamp)%&gt;%select_if(is.numeric)
+q8.&lt;-cor(q8)
+q8.</code></pre>
+<pre><code>##                   temp        dewp      humid      precip   pressure   wind_dir
+## temp        1.00000000  0.90162405  0.1071538 -0.02950825 -0.2536660 -0.1290057
+## dewp        0.90162405  1.00000000  0.5193125  0.04208537 -0.2885808 -0.2460956
+## humid       0.10715384  0.51931252  1.0000000  0.18651675 -0.1803573 -0.3249786
+## precip     -0.02950825  0.04208537  0.1865167  1.00000000 -0.1079932 -0.0780323
+## pressure   -0.25366597 -0.28858075 -0.1803573 -0.10799318  1.0000000 -0.1988064
+## wind_dir   -0.12900567 -0.24609556 -0.3249786 -0.07803230 -0.1988064  1.0000000
+## wind_speed -0.10894880 -0.18136793 -0.2058287  0.03005549 -0.1324927  0.2544550
+##             wind_speed
+## temp       -0.10894880
+## dewp       -0.18136793
+## humid      -0.20582870
+## precip      0.03005549
+## pressure   -0.13249274
+## wind_dir    0.25445501
+## wind_speed  1.00000000</code></pre>
+<pre class="r"><code>q9&lt;-mydata%&gt;%group_by(origin)%&gt;%filter(month==&quot;3&quot;)%&gt;%summarise(med_temp=median(temp))
+q9</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   origin med_temp
+##   &lt;chr&gt;     &lt;dbl&gt;
+## 1 EWR        39.0
+## 2 JFK        39.0
+## 3 LGA        39.0</code></pre>
+<pre class="r"><code>q10&lt;-mydata%&gt;%filter(origin==&quot;LGA&quot;,month==&quot;6&quot;)%&gt;%summarise(min_temp=min(temp))
+q10.&lt;-mydata%&gt;%filter(origin==&quot;LGA&quot;,month==&quot;6&quot;)%&gt;%summarise(max_temp=max(temp))
+q10</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   min_temp
+##      &lt;dbl&gt;
+## 1     55.0</code></pre>
+<pre class="r"><code>q10.</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   max_temp
+##      &lt;dbl&gt;
+## 1     93.9</code></pre>
+<pre class="r"><code>q11&lt;-mydata%&gt;%filter(pressure&lt;1000,wind_speed&lt;20)%&gt;%summarise(n=n())
+q11</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##       n
+##   &lt;int&gt;
+## 1   108</code></pre>
+<pre class="r"><code>q12&lt;-mydata%&gt;%filter(pressure&lt;1000,wind_speed&lt;20)%&gt;%group_by(origin)%&gt;%summarise(n=n())
+q12</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   origin     n
+##   &lt;chr&gt;  &lt;int&gt;
+## 1 EWR       40
+## 2 JFK       27
+## 3 LGA       41</code></pre>
+<pre class="r"><code>q13&lt;-mydata%&gt;%filter(month==&quot;8&quot;)%&gt;%group_by(hour)%&gt;%summarise(max_hr_temp=max(temp))
+q13</code></pre>
+<pre><code>## # A tibble: 24 x 2
+##     hour max_hr_temp
+##    &lt;int&gt;       &lt;dbl&gt;
+##  1     0        80.1
+##  2     1        78.1
+##  3     2        78.1
+##  4     3        77  
+##  5     4        77  
+##  6     5        78.1
+##  7     6        77  
+##  8     7        77  
+##  9     8        79.0
+## 10     9        82.9
+## # ... with 14 more rows</code></pre>
+<ol style="list-style-type: decimal">
+<li>EWR: 0.07352941in. JFK: 0.06022569in. LGA:0.06610052in.</li>
+<li>see ‘q2’</li>
+<li>7/18/13 and 7/19/13</li>
+<li>EWR</li>
+<li>1/31/13</li>
+<li>89.20413%</li>
+<li>0.1071538</li>
+<li>see ‘q8’</li>
+<li>All locations had median temp = 39.02 degrees.</li>
+<li>55.04 &lt; T &lt; 93.92</li>
+<li>108</li>
+<li>EWR: 40, JFK: 27, LGA: 41</li>
+<li>hour 15</li>
+</ol>
+<p>###7:</p>
+<p>#####Correlation Heatmap</p>
+<pre class="r"><code>library(tibble)
+tidycor&lt;-q8.%&gt;%as.data.frame%&gt;%rownames_to_column()%&gt;%
+  pivot_longer(-1,names_to=&quot;name&quot;,values_to=&quot;correlation&quot;)
+library(ggplot2)
+tidycor%&gt;%ggplot(aes(rowname,name,fill=correlation))+
+  geom_tile()+
+  scale_fill_gradient2(low=&quot;yellow&quot;,mid=&quot;orange&quot;,high=&quot;red&quot;)+
+  geom_text(aes(label=round(correlation,2)),color=&quot;black&quot;,size = 4)+
+  theme(axis.text.x=element_text(angle=90,hjust=1))+
+  coord_fixed()+
+  ggtitle(&quot;Correlation Heatmap of Weather Factors&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>This correlation heatmap shows the correlation between all the numeric variables in ‘mydata’, with the exception of time variables. Most variables do not appear to have a strong correlation, whether it be negative or positive, with one another. However, temperature and dew point are an exeption, and have a high correlation of +0.9, and humidity and dew point also have a notable correlation of +0.52.</p>
+<p>###8:</p>
+<p>#####Based on the data exploration done above, the origins, as opposed to hour or other time factors, do not vary greatly in their weather measurements. Below is a simple plot which compares the three origins at a given day (for this example, the day is March 9th, 2013).</p>
+<pre class="r"><code>march9&lt;-mydata%&gt;%filter(month==&quot;3&quot;,day==&quot;9&quot;)
+library(ggplot2)
+ggplot(march9,aes(x=hour,y=temp,color=origin)) + 
+  geom_point(size=3,alpha=0.25) +
+  geom_line()+
+  ggtitle(&quot;Temperatures at Each Origin on March 9, 2013&quot;)+
+  ylab(&quot;Temp (degrees F)&quot;)+xlab(&quot;Hour of Day&quot;)+
+  scale_x_continuous(breaks=seq(0,24,1))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(march9,aes(x=hour,y=humid,color=origin)) + 
+  geom_point(size=3,alpha=0.25) +
+  geom_line()+
+  ggtitle(&quot;Humidity at Each Location on March 9, 2013&quot;)+
+  ylab(&quot;Humidity (%)&quot;)+xlab(&quot;Hour of Day&quot;)+
+  scale_x_continuous(breaks=seq(0,24,1))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The plots above show the similarities in both temperature and humidity among the three origins on a given day. Of course, there are differences at nearly every individual point, but the pattern envisioned by the line is quite similar. As predicted in the introduction, the origins do not seem to have a major impact on the temperature and humidity measurements. These plots also show what times of the day has the lowest or highest humidity and temperature, as well as a comparison between hours of the day for that particular day.</p>
+<p>###9:</p>
+<p>#####Precipitation is an important part of weather forecasts. The code below works to give a visualization of the average preceipitation per month in 2013. Each different origin is color coded, so viewers could compare the data across both time and location.</p>
+<pre class="r"><code>plotdata&lt;-q2%&gt;%select(precip,rain,origin,month,day,hour)%&gt;%group_by(month)
+
+ggplot(plotdata, aes(x = month, y = precip, fill=origin))+
+  geom_bar(stat=&quot;summary&quot;,fun.y=&quot;mean&quot;, position=&quot;dodge&quot;)+
+  ggtitle(&quot;Average Precipitation Per Day For Each Month&quot;)+
+  xlab(&quot;Month # in 2013&quot;)+ylab(&quot;Precipitation (inches)&quot;)+
+  scale_fill_brewer(palette=&quot;Dark2&quot;)+scale_x_continuous(breaks=1:12)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" />
+It appears that the month of June had the highest average of rainfall across all three locations. This graph is helpful in seeing the average precipitation any given day would have based on the time of the year. The results also confirm the prediction that there is not a great difference across origin.</p>
+<p>###10:</p>
+<p>#####The correlation heatmap showed a strong correlation between temperature and dewpoint. The scatterplot below is a good visualization to show the relationship between those variables. Each color represents a different origin.</p>
+<pre class="r"><code>scatterdata&lt;-mydata%&gt;%select(origin,month,day,hour,temp,dewp)%&gt;%filter(hour==&quot;12&quot;,origin==&quot;JFK&quot;)%&gt;%mutate(season=case_when(month==&quot;12&quot;|month==&quot;1&quot;|month==&quot;2&quot;~&quot;winter&quot;,month==&quot;3&quot;|month==&quot;4&quot;|month==&quot;5&quot;~&quot;spring&quot;,month==&quot;6&quot;|month==&quot;7&quot;|month==&quot;8&quot;~&quot;summer&quot;,month==&quot;9&quot;|month==&quot;10&quot;|month==&quot;11&quot;~&quot;fall&quot;))
+
+ggplot(scatterdata,aes(x=temp,y=dewp,color=season))+
+  geom_point(size=2)+
+  ggtitle(&quot;Temperature vs. Dewpoint Every Day at Noon for JFK in 2013&quot;)+
+  ylab(&quot;Dewpoint (degrees F)&quot;)+xlab(&quot;Temp (degrees F)&quot;)+
+  geom_smooth(method=&quot;lm&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The scatterplot shows that the two variables are directly proportional to one another. In other words, temperature and dewpoint have a positive linear relationship. As expected there was much overlap between spring and fall. The regression lines are very close in slope as well. In winter in JFK, the temperature and dewpoint tends to be lower, whereas the opposite pattern is observed for summer days.</p>
+<p>###11:</p>
+<p>#####K-means was used for cluster analysis.</p>
+<pre class="r"><code>library(cluster)
+clust_dat&lt;-mydata%&gt;%filter(month==&quot;1&quot;,day==&quot;31&quot;)%&gt;%select(temp,dewp,humid)
+sil_width&lt;-vector()
+for(i in 2:10){
+  kms&lt;-kmeans(clust_dat,centers=i)
+  sil&lt;-silhouette(kms$cluster,dist(clust_dat))
+  sil_width[i]&lt;-mean(sil[,3])
+}
+silhouette_plot&lt;-ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name=&quot;k&quot;,breaks=1:10)
+silhouette_plot</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>kmeans1&lt;-clust_dat%&gt;%kmeans(2)
+kmeans1</code></pre>
+<pre><code>## K-means clustering with 2 clusters of sizes 49, 23
+## 
+## Cluster means:
+##       temp     dewp    humid
+## 1 39.64082 16.63020 39.47898
+## 2 56.50348 53.31043 90.42304
+## 
+## Clustering vector:
+##  [1] 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 1 1 1 1 1 1
+## [39] 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+## 
+## Within cluster sum of squares by cluster:
+## [1] 6573.963 1816.638
+##  (between_SS / total_SS =  88.7 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+<pre class="r"><code>kmeansclust&lt;-clust_dat%&gt;%mutate(cluster=as.factor(kmeans1$cluster))
+kmeansclust%&gt;%ggplot(aes(temp,dewp,color=cluster))+geom_point()+ggtitle(&quot;K-means Clustering Plot&quot;)+xlab(&quot;Temperature (degrees F)&quot;)+ylab(&quot;Dewpoint (degrees F&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Since there were thousands and thousands of observations, the filter() function was used to take only observations from all three origins for January 1, 2013. In addition, this dataset is handy for looking at specific groups of observations. Three numeric variables - temperature, dewpoint, and humidity - were used for clustering. The silhouette width was computed. Two clusters were chosen, because it had the highest average silhouette width. The final plot gives a visualization of the two labelled variables, but with clusters based on the 3 variables listed earlier. Cluster 1 has generally low dewpoints, low humidities, and low temperatures. Cluster 2 displays the opposite. The cluster means in the k-means analysis was useful in seeing the mean values of each variable within each cluster.</p>
+<pre><code>## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18362)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] cluster_2.1.0      ggplot2_3.3.0      tibble_3.0.1       tidyr_1.0.3       
+## [5] dplyr_0.8.5        nycflights13_1.0.1
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.4.6       pillar_1.4.4       compiler_4.0.0     RColorBrewer_1.1-2
+##  [5] tools_4.0.0        digest_0.6.25      lattice_0.20-41    nlme_3.1-147      
+##  [9] evaluate_0.14      lifecycle_0.2.0    gtable_0.3.0       mgcv_1.8-31       
+## [13] pkgconfig_2.0.3    rlang_0.4.5        Matrix_1.2-18      cli_2.0.2         
+## [17] yaml_2.2.1         blogdown_0.18      xfun_0.13          withr_2.2.0       
+## [21] stringr_1.4.0      knitr_1.28         vctrs_0.2.4        grid_4.0.0        
+## [25] tidyselect_1.0.0   glue_1.4.0         R6_2.4.1           fansi_0.4.1       
+## [29] rmarkdown_2.1      bookdown_0.18      purrr_0.3.4        farver_2.0.3      
+## [33] magrittr_1.5       splines_4.0.0      scales_1.1.0       ellipsis_0.3.0    
+## [37] htmltools_0.4.0    assertthat_0.2.1   colorspace_1.4-1   labeling_0.3      
+## [41] utf8_1.1.4         stringi_1.4.6      munsell_0.5.0      crayon_1.3.4</code></pre>
+<pre><code>## [1] &quot;2020-05-09 08:25:36 CDT&quot;</code></pre>
+<pre><code>##           sysname           release           version          nodename 
+##         &quot;Windows&quot;          &quot;10 x64&quot;     &quot;build 18362&quot; &quot;DESKTOP-AO7C51H&quot; 
+##           machine             login              user    effective_user 
+##          &quot;x86-64&quot;           &quot;blee8&quot;           &quot;blee8&quot;           &quot;blee8&quot;</code></pre>
+</div>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

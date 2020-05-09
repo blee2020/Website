@@ -10,4 +10,4 @@ showpagemeta: false
 
 Here is my blog page.
 
-- [1: Organizing and Visualizing Data with Python](/pythontutorial/)
+- [1: Organizing and Visualizing Data with Python](/blog/)
