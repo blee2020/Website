@@ -1,17 +1,15 @@
 ---
-title: "Organizing and Visualizing Data in Python"
-author: "Becky Lee"
+title: Organizing and Visualizing Data in Python
+author: Becky Lee
 date: '2020-05-09'
-output:
-  html_document:
-    df_print: paged
-  pdf_document: default
-  word_document: default
-description: ''
 slug: organizing-and-visualizing-data-in-python
+categories:
+  - Datasets
+  - Python
 tags: []
-categories: []
+description: ''
 ---
+
 Hello world! Welcome to my very first blog post. This beginner level guide will show you various ways of organizing and visualizing data using Python. Everything is at the beginner level! Let's get started.
 
 For this tutorial style walkthrough, we'll be working with the pokemon dataset, renamed 'poke' here for convenience. The python packages 'pandas' and 'seaborn' will come in handy too!
@@ -62,4 +60,3 @@ To see if being Legendary significantly affects a pokemon's stats, we could face
 ![](/blog/pythontutorial_files/8.JPG)
 
 That's the end of the tutorial, but there is plenty more to explore in Python! Good luck.
-
