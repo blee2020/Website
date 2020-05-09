@@ -1,0 +1,275 @@
+---
+title: "PROJECT 1"
+author: "SDS348 Spring 2020"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, R.options=list(max.print=100))
+```
+
+Becky Lee bsl668
+
+---
+
+###1: Introduction
+
+#####The dataset `weather', aquired from a list of data in R, contains 15 variables and 26,115 observations. As an individual who checks the weather daily, this dataset caught my attention. In addition, there was a wide number and variety of variables, which would give flexibility when tinkering with the data. The 15 variables include origin, a time ID, year, month, day, hour, temperature, dew point, humidity, wind direction, wind speed, wind gust, precipitation, pressure, and visibility. For purposes of this project, this dataset was divided into 2 separate datasets, with the non-numeric variables (time_hour and origin) being the only common variables. 
+
+#####Although there are 3 origins, since all weather measurements were taken in a similar vicinity, the data would likely not vary greatly among those origins. When I check the weather, there tends to be a positive association between humidity and precipitation. I predict that this will be the case with this dataset as well. In addition, temperatures will most definitely be lower in the winter and higher in the summer for all locaitons.
+
+```{R}
+
+library(nycflights13)
+library(dplyr)
+library(tidyr)
+head(weather)
+weather1<-weather%>%drop_na("temp")
+weath<-weather1%>%select(-contains("wind"))
+wind<-weather1%>%select("origin",contains("_"))
+head(weather1)
+
+```
+
+
+### 2:
+
+##### The data in the newly made datasets 'weath' and 'wind' was tidy. Below is the untidy version of the two datasets.
+
+```{R}
+
+untidyweath<-weath%>%pivot_wider(names_from="origin", values_from="temp")
+untidywind<-wind%>%rename("timestamp"="time_hour")
+glimpse(untidyweath)
+glimpse(untidywind)
+
+```
+
+### 3:
+
+##### The untidy datasets were made tidy.
+
+```{R}
+
+weathdata<-untidyweath%>%pivot_longer(cols=c("EWR","JFK","LGA"),names_to="origin",values_to="temp")%>%
+  drop_na("temp")%>%
+  rename("timestamp"="time_hour")
+winddata<-untidywind
+
+```
+
+
+### 4:
+
+##### The two datasets were joined into one.
+
+```{R}
+
+mydata<-weathdata%>%left_join(winddata,by=c("timestamp","origin"))
+glimpse(mydata)
+
+```
+Both datasets had the same number of observations, with the common variable 'timestamp' present in both datasets. In each dataset, each row corresponded to one in the other dataset. Therefore, it would not matter which join was used here. Left join was used, due to it being the most familiar. No rows were dropped following the join.
+
+
+### 5:
+
+##### To simplify the data, some columns of data were removed. The remaining columns were also reordered.
+
+```{R}
+
+mydata<-mydata%>%select(timestamp,month,day,hour,origin,temp,dewp,humid,precip,pressure,wind_dir,wind_speed)
+glimpse(mydata)
+
+```
+
+
+###6: 
+
+##### Below shows exploration of the new dataset. Questions were answered using a combination of 'dplyr' functions and summary statistics.
+
+#####1) What was the average precipitation based on observations where there was rain for each origin?
+#####2) Make a new column which tells whether or not there was rain for each observation.
+#####3) For the origin containing the highest recorded temperature, what is the date the highest temperature was recorded?
+#####4) Which location has the lowest average temperature in December?
+#####5) What date experienced the maximum windspeed out of the data from JFK?
+#####6) What was the average humidity on days where there was rain?
+#####7) What is the correlation between temperature and humidity?
+#####8) Create a correlation matrix.
+#####9) What were the median temperatures for each location in March 2013?
+#####10) What is the temperature range for LGA in June 2013?
+#####11) How many observations had a pressure < 1000 mb and wind speed < 20 mph?
+#####12) Of those observations from above, how many were there for each location?
+#####13) Across all locations, what hour of the day is the warmest in the month of August?
+
+```{R}
+
+q1<-mydata%>%group_by(origin)%>%filter(precip>0)%>%summarize(avg_prec=mean(precip))
+q1
+q2<-mydata%>%mutate(rain=case_when(precip>0 ~"yes",precip==0 ~"no"))
+q2
+q3<-mydata%>%group_by(origin)%>%summarise(max_temp=max(temp))
+q3.<-mydata%>%filter(origin=="EWR")%>%select(timestamp,origin,temp)%>%arrange(desc(temp))
+q3.
+q4<-mydata%>%group_by(origin)%>%filter(month=="12")%>%summarise(avg_temp=mean(temp))
+q4
+q5<-mydata%>%filter(origin=="JFK")%>%select(timestamp,wind_speed)%>%arrange(desc(wind_speed))
+q5
+q6<-q2%>%filter(rain=="yes")%>%summarise(avg_hum=mean(humid))
+q6
+q7<-mydata%>%na.omit%>%select(temp,humid)
+q7.<-cor(q7)
+q7.
+q8<-mydata%>%na.omit%>%select(-month,-day,-hour,-timestamp)%>%select_if(is.numeric)
+q8.<-cor(q8)
+q8.
+q9<-mydata%>%group_by(origin)%>%filter(month=="3")%>%summarise(med_temp=median(temp))
+q9
+q10<-mydata%>%filter(origin=="LGA",month=="6")%>%summarise(min_temp=min(temp))
+q10.<-mydata%>%filter(origin=="LGA",month=="6")%>%summarise(max_temp=max(temp))
+q10
+q10.
+q11<-mydata%>%filter(pressure<1000,wind_speed<20)%>%summarise(n=n())
+q11
+q12<-mydata%>%filter(pressure<1000,wind_speed<20)%>%group_by(origin)%>%summarise(n=n())
+q12
+q13<-mydata%>%filter(month=="8")%>%group_by(hour)%>%summarise(max_hr_temp=max(temp))
+q13
+```
+
+1) EWR: 0.07352941in. JFK: 0.06022569in. LGA:0.06610052in.
+2) see 'q2'
+3) 7/18/13 and 7/19/13
+4) EWR
+5) 1/31/13
+6) 89.20413%
+7) 0.1071538
+8) see 'q8'
+9) All locations had median temp = 39.02 degrees.
+10) 55.04 < T < 93.92
+11) 108
+12) EWR: 40, JFK: 27, LGA: 41
+13) hour 15
+
+
+###7:
+
+#####Correlation Heatmap
+
+```{R}
+
+library(tibble)
+tidycor<-q8.%>%as.data.frame%>%rownames_to_column()%>%
+  pivot_longer(-1,names_to="name",values_to="correlation")
+library(ggplot2)
+tidycor%>%ggplot(aes(rowname,name,fill=correlation))+
+  geom_tile()+
+  scale_fill_gradient2(low="yellow",mid="orange",high="red")+
+  geom_text(aes(label=round(correlation,2)),color="black",size = 4)+
+  theme(axis.text.x=element_text(angle=90,hjust=1))+
+  coord_fixed()+
+  ggtitle("Correlation Heatmap of Weather Factors")
+
+```
+
+This correlation heatmap shows the correlation between all the numeric variables in 'mydata', with the exception of time variables. Most variables do not appear to have a strong correlation, whether it be negative or positive, with one another. However, temperature and dew point are an exeption, and have a high correlation of +0.9, and humidity and dew point also have a notable correlation of +0.52.
+
+
+###8:
+
+#####Based on the data exploration done above, the origins, as opposed to hour or other time factors, do not vary greatly in their weather measurements. Below is a simple plot which compares the three origins at a given day (for this example, the day is March 9th, 2013).
+
+```{R}
+
+march9<-mydata%>%filter(month=="3",day=="9")
+library(ggplot2)
+ggplot(march9,aes(x=hour,y=temp,color=origin)) + 
+  geom_point(size=3,alpha=0.25) +
+  geom_line()+
+  ggtitle("Temperatures at Each Origin on March 9, 2013")+
+  ylab("Temp (degrees F)")+xlab("Hour of Day")+
+  scale_x_continuous(breaks=seq(0,24,1))
+ggplot(march9,aes(x=hour,y=humid,color=origin)) + 
+  geom_point(size=3,alpha=0.25) +
+  geom_line()+
+  ggtitle("Humidity at Each Location on March 9, 2013")+
+  ylab("Humidity (%)")+xlab("Hour of Day")+
+  scale_x_continuous(breaks=seq(0,24,1))
+
+```
+
+The plots above show the similarities in both temperature and humidity among the three origins on a given day. Of course, there are differences at nearly every individual point, but the pattern envisioned by the line is quite similar. As predicted in the introduction, the origins do not seem to have a major impact on the temperature and humidity measurements. These plots also show what times of the day has the lowest or highest humidity and temperature, as well as a comparison between hours of the day for that particular day.
+
+
+###9:
+
+#####Precipitation is an important part of weather forecasts. The code below works to give a visualization of the average preceipitation per month in 2013. Each different origin is color coded, so viewers could compare the data across both time and location.
+
+```{R}
+plotdata<-q2%>%select(precip,rain,origin,month,day,hour)%>%group_by(month)
+
+ggplot(plotdata, aes(x = month, y = precip, fill=origin))+
+  geom_bar(stat="summary",fun.y="mean", position="dodge")+
+  ggtitle("Average Precipitation Per Day For Each Month")+
+  xlab("Month # in 2013")+ylab("Precipitation (inches)")+
+  scale_fill_brewer(palette="Dark2")+scale_x_continuous(breaks=1:12)
+
+```
+It appears that the month of June had the highest average of rainfall across all three locations. This graph is helpful in seeing the average precipitation any given day would have based on the time of the year. The results also confirm the prediction that there is not a great difference across origin.
+
+
+###10:
+
+#####The correlation heatmap showed a strong correlation between temperature and dewpoint. The scatterplot below is a good visualization to show the relationship between those variables. Each color represents a different origin. 
+
+```{R}
+
+scatterdata<-mydata%>%select(origin,month,day,hour,temp,dewp)%>%filter(hour=="12",origin=="JFK")%>%mutate(season=case_when(month=="12"|month=="1"|month=="2"~"winter",month=="3"|month=="4"|month=="5"~"spring",month=="6"|month=="7"|month=="8"~"summer",month=="9"|month=="10"|month=="11"~"fall"))
+
+ggplot(scatterdata,aes(x=temp,y=dewp,color=season))+
+  geom_point(size=2)+
+  ggtitle("Temperature vs. Dewpoint Every Day at Noon for JFK in 2013")+
+  ylab("Dewpoint (degrees F)")+xlab("Temp (degrees F)")+
+  geom_smooth(method="lm")
+  
+```
+
+The scatterplot shows that the two variables are directly proportional to one another. In other words, temperature and dewpoint have a positive linear relationship. As expected there was much overlap between spring and fall. The regression lines are very close in slope as well. In winter in JFK, the temperature and dewpoint tends to be lower, whereas the opposite pattern is observed for summer days.
+
+
+###11:
+
+#####K-means was used for cluster analysis.
+
+```{R}
+
+library(cluster)
+clust_dat<-mydata%>%filter(month=="1",day=="31")%>%select(temp,dewp,humid)
+sil_width<-vector()
+for(i in 2:10){
+  kms<-kmeans(clust_dat,centers=i)
+  sil<-silhouette(kms$cluster,dist(clust_dat))
+  sil_width[i]<-mean(sil[,3])
+}
+silhouette_plot<-ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks=1:10)
+silhouette_plot
+
+kmeans1<-clust_dat%>%kmeans(2)
+kmeans1
+
+kmeansclust<-clust_dat%>%mutate(cluster=as.factor(kmeans1$cluster))
+kmeansclust%>%ggplot(aes(temp,dewp,color=cluster))+geom_point()+ggtitle("K-means Clustering Plot")+xlab("Temperature (degrees F)")+ylab("Dewpoint (degrees F")
+```
+
+Since there were thousands and thousands of observations, the filter() function was used to take only observations from all three origins for January 1, 2013. In addition, this dataset is handy for looking at specific groups of observations. Three numeric variables - temperature, dewpoint, and humidity - were used for clustering. The silhouette width was computed. Two clusters were chosen, because it had the highest average silhouette width. The final plot gives a visualization of the two labelled variables, but with clusters based on the 3 variables listed earlier. Cluster 1 has generally low dewpoints, low humidities, and low temperatures. Cluster 2 displays the opposite. The cluster means in the k-means analysis was useful in seeing the mean values of each variable within each cluster.
+
+
+```{R, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+Sys.time()
+Sys.info()
+```
