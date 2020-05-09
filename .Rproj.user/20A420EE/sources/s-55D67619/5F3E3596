@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589034026840.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "706465103",
+    "id" : "5F3E3596",
+    "lastKnownWriteTime" : 1589030122,
+    "last_content_update" : 1589030122,
+    "path" : "~/SDS 348/Website/public/css/main.css",
+    "project_path" : "public/css/main.css",
+    "properties" : {
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "css"
+}
