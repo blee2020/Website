@@ -7,7 +7,7 @@
     <meta name="author" content="Becky Lee" />
     <meta name="description" content="Describe your website">
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
-    <title>Projects</title>
+    <title>Becky&#39;s Portfolio</title>
     <meta name="generator" content="Hugo 0.70.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/main.css" />
@@ -24,8 +24,6 @@
 
   <body>
     <div id="wrap">
-
-      
       <nav class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
@@ -52,32 +50,39 @@
   </div>
 </nav>
 
-      
-        <section id="projects">
-  <div class="container">
-    <h3></h3>
-    <div class="panel panel-default">
-      <div class="panel-body">
-<h2 id="projects">Projects</h2>
-<p>Here is some of my past work:</p>
-<ul>
-<li>
-<p><a href="/project1/">Project 1: Exploratory Data Analysis with Tidyverse Tools</a></p>
-</li>
-<li>
-<p><a href="/project2/">Project 2: Modeling, Testing, and Classification</a></p>
-</li>
-</ul>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-      
-    </div>
+      <section id="about">
+        <div class="container">
+        <div class="avatar">
+          <img class="img-circle" src="/img/profile.JPG" alt="It me." height=200px width=200px >
+        </div>
+        <h3>I'm <strong>Becky Lee</strong>, a previous biology major at UT Austin. I will be a dental student this fall, but decided to get into R/Python because it seemed interesting!</h3>
+        <h3>My hobbies include sports, photography, coding, and <a href="/blogs/"> blogging</a>.</h3>
+        <h3>Here are some of my past <a href="/projects/"> projects</a>.</h3>
+        <h3>For more information about me, check out my academic &amp; professional <a href="resume.pdf" target="_blank">resume</a>.</h3>
+        <h3>Contact me by <a href="mailto:blee8648@utexas.edu">email</a>.</h3>
+        <div class="social">
+  <ul class="social-links">
+    
 
     
+      <li><a href="mailto:blee8648@utexas.edu"><i class="fa fa-envelope"></i></a></li>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+  </ul>
+</div>
+
+        </div>
+      </section>
+    </div>
     <footer>
   <div id="footer">
     <div class="container">
@@ -98,6 +103,5 @@
 <script src="/js/ie10-viewport-bug-workaround.js"></script>
 
 
-    
   </body>
 </html>

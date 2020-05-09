@@ -13,10 +13,10 @@
     
     <item>
       <title>Blogs</title>
-      <link>/blog1/</link>
+      <link>/blogs/</link>
       <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
       
-      <guid>/blog1/</guid>
+      <guid>/blogs/</guid>
       <description>Blogs Here are my blog posts:
  Blog 1: Organizing and Visualizing Data with Python  </description>
     </item>

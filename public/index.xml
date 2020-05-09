@@ -13,6 +13,17 @@
     
     <item>
       <title>Organizing and Visualizing Data in Python</title>
+      <link>/organizing-and-visualizing-data-in-python/</link>
+      <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/organizing-and-visualizing-data-in-python/</guid>
+      <description>Hello world! Welcome to my very first blog post. This beginner level guide will show you various ways of organizing and visualizing data using Python. Everything is at the beginner level! Let’s get started.
+For this tutorial style walkthrough, we’ll be working with the pokemon dataset, renamed ‘poke’ here for convenience. The python packages ‘pandas’ and ‘seaborn’ will come in handy too!
+Now that we are somewhat familiar with the dataset, we could start organizing and trying different functions.</description>
+    </item>
+    
+    <item>
+      <title>Organizing and Visualizing Data in Python</title>
       <link>/blog/organizing-and-visualizing-data-in-python/</link>
       <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
       
@@ -54,10 +65,10 @@ Now that we are somewhat familiar with the dataset, we could start organizing an
     
     <item>
       <title>Blogs</title>
-      <link>/blog1/</link>
+      <link>/blogs/</link>
       <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
       
-      <guid>/blog1/</guid>
+      <guid>/blogs/</guid>
       <description>Blogs Here are my blog posts:
  Blog 1: Organizing and Visualizing Data with Python  </description>
     </item>
